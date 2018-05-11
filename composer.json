@@ -1,0 +1,23 @@
+{
+  "name": "itxiao6/container",
+  "description": "container",
+  "keywords": ["container", "IOC","依赖注入","容器"],
+  "homepage": "http://github.com/itxiao6/container",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Small six",
+      "email": "itxiao6@qq.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.6.0"
+  },
+  "require-dev": {
+  },
+  "autoload": {
+    "psr-4": {
+      "Itxiao6\\Container\\": "src/"
+    }
+  }
+}
