@@ -9,84 +9,80 @@ class Container
 {
     /**
      * 容器接口
-     * @var null|self
+     * @var null|array
      */
-    protected static $Interface = null;
+    protected static $interface = null;
     /**
-     * 容器
+     * 容器名称
+     * @var string
+     */
+    protected $container_name = 'global';
+    /**
+     * 存储构造器
      * @var array
      */
-    protected $container = [];
+    protected $build_lists = [];
     /**
-     * 构造存储器
+     * 容器内的 实例化后的内容
      * @var array
      */
-    protected $interfaces = [];
+    protected $interfaces_lists = [];
 
     /**
      * 获取接口
-     * @return Container|null
+     * @param null|string $containerName
+     * @return Container
      */
-    public static function get_Interface()
+    public static function getInterface($containerName = 'global')
     {
-        if(self::$Interface === null){
-            echo('实例化'."\n");
-            self::$Interface = new static();
+        if(!isset(self::$interface[$containerName])){
+            self::$interface[$containerName] = new self($containerName);
         }
-        return self::$Interface;
+        return self::$interface[$containerName];
     }
 
     /**
-     * 设置值
-     * @param $name
-     * @param $value
+     * 设置为可全局访问
+     * @return $this
      */
-    public function set($name,$value){
-        $this -> container[$name] = $value;
+    public function set_global()
+    {
+        self::$interface[$this -> container_name] = $this;
+        return $this;
     }
 
     /**
-     * 获取值
+     * 构造器
+     * Container constructor.
+     * @param string $containerName
+     */
+    protected function __construct($containerName = 'global')
+    {
+        $this -> container_name = $containerName;
+    }
+
+    /**
+     * 获取容器内的实例
      * @param $name
-     * @return mixed|null
-     * @throws \Exception
+     * @return mixed
      */
     public function get($name)
     {
-        /**
-         * 判断容器里是否存在
-         */
-        if(!isset($this -> container[$name])){
-            /**
-             * 判断构造器容器内是否存在
-             */
-            if(isset($this -> interfaces[$name])){
-                /**
-                 * 构造
-                 */
-                $this -> container[$name] = $this -> make($name);
-                /**
-                 * 返回
-                 */
-                return $this -> container[$name];
-            }else{
-                throw new \Exception($name.'构造器不存在');
-            }
+        if(!isset($this ->interfaces_lists[$name])){
+            $interface = $this ->interfaces_lists[$name];
+        }else{
+            $interface = $this -> make($name);
         }
-        /**
-         * 返回容器内的内容
-         */
-        return $this -> container[$name];
+        return $interface;
     }
-
     /**
-     * 实例化一个示例
+     * 创造一个实例
      * @param $name
      * @return mixed
      */
     public function make($name)
     {
-        return $this -> $this->interfaces[$name]['callback'](...$this -> $this->interfaces[$name]['args']);
+        return $this -> {$this->build_lists[$name]['callback']}(...$this -> $this->build_lists[$name]['args']);
     }
 
     /**
@@ -98,7 +94,7 @@ class Container
      */
     public function build($name,$callback = null,$args = [])
     {
-        return $this -> interfaces[$name] = [
+        return $this -> build_lists[$name] = [
             'callback'=>$callback,
             'args'=>$args
         ];
